@@ -1,109 +1,79 @@
 import 'package:flutter/material.dart';
 
 class TimePickerWidget extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _TimePickerWidgetState();
-}
+  final hourSelected = TextEditingController();
+  final minSelected = TextEditingController();
 
-// class TimePickerWidget2 extends StatelessWidget{
-//   TimeOfDay _time = TimeOfDay.now();
-//   var hourSelected = TextEditingController();
-//   var minSelected = TextEditingController();
-//
-//   @override
-//   Widget build(BuildContext context) {
-//      return  Scaffold(
-//       body:
-//       Container(
-//         color: Colors.blue,
-//         child: Row(
-//
-//           children: [
-//             TextField(
-//               decoration: const InputDecoration(
-//                 border: OutlineInputBorder(
-//                     borderRadius: BorderRadius.all(Radius.circular(10)),
-//                     borderSide: BorderSide(width: 2)),
-//                 hintText: "${TimeOfDay.hoursPerDay}",
-//               ),
-//               controller: hourSelected,
-//               keyboardType: TextInputType.number,
-//             ),
-//             TextField(
-//               decoration: const InputDecoration(
-//                 border: OutlineInputBorder(
-//                     borderRadius: BorderRadius.all(Radius.circular(10)),
-//                     borderSide: BorderSide(width: 2)),
-//                 hintText: "${TimeOfDay.minutesPerHour}",
-//               ),
-//               controller: minSelected,
-//               keyboardType: TextInputType.number,
-//               maxLength: 60,
-//             ),
-//
-//           ],
-//
-//
-//         ),
-//       ),
-//
-//     );
-//
-//   }
-//
-// }
+  var title;
+
+  TimePickerWidget({Key? key, required this.title}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() =>
+      _TimePickerWidgetState(hourSelected, minSelected);
+
+  late TimeOfDay _selectedTime;
+
+  //
+  // TimeOfDay getSelectedTime() {
+  //   _selectedTime = TimeOfDay(
+  //       hour: int.parse(hourSelected.text),
+  //       minute: int.parse(minSelected.text));
+  //
+  //   return _selectedTime;
+  // }
+}
 
 class _TimePickerWidgetState extends State<TimePickerWidget> {
   final TimeOfDay _time = TimeOfDay.now();
-  final _hourSelected = TextEditingController();
-  final _minSelected = TextEditingController();
-  late  TimeOfDay _selectedTime;
 
+  TextEditingController hourSelected;
+  TextEditingController minSelected;
 
-  TimeOfDay  getSelectedTime() {
-     _selectedTime.replacing(
-       hour:  int.parse(_hourSelected.text),
-       minute:  int.parse(_minSelected.text),
-       
-     ) ;
+  _TimePickerWidgetState(this.hourSelected, this.minSelected);
 
-
-
-     return _selectedTime;
-  }
   @override
   Widget build(context) {
     return Scaffold(
       body: Container(
+        // color: Colors.blue.shade200,
         child: Column(
-
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const Text("Pick Time"),
+            Text(
+              widget.title,
+              style: const TextStyle(color: Colors.blue),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
                   child: TextField(
                     decoration: const InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.all(4),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                             borderSide: BorderSide(width: 2)),
                         hintText: "${TimeOfDay.hoursPerDay}",
                         labelText: "hr"),
-                    controller: _hourSelected,
+                    controller: hourSelected,
                     keyboardType: TextInputType.number,
                   ),
                 ),
+                const Text(" : "),
                 Flexible(
                   child: TextField(
+
                     decoration: const InputDecoration(
+                      isDense: true,
+                        contentPadding: EdgeInsets.all(4),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                             borderSide: BorderSide(width: 2)),
                         hintText: "${TimeOfDay.minutesPerHour}",
                         labelText: "min"),
-
-                    controller: _minSelected,
+                    controller: minSelected,
                     keyboardType: TextInputType.number,
                   ),
                 ),
