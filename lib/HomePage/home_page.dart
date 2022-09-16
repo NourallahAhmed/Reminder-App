@@ -4,6 +4,9 @@ import '../AddingTask/AddingNewTask.dart';
 import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
 
 import '../TaskDetails/task_details_screen.dart';
+import 'package:badges/badges.dart';
+
+
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -54,75 +57,76 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       selectedDay = date;
       selectedEvent = events[selectedDay] ?? [];
+      //((a, b) => a.length.compareTo(b.length));
+      // selectedEvent.any((element) => element.isDone);
+      selectedEvent.sort((a, b) {
+        if (b.isDone) {
+          return -1;
+        }
+        return 1;
+      });
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     selectedEvent = events[selectedDay] ?? [];
-    print("events");
-    print(events);
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {
-            print("Pressed");
-          },
-        ),
       ),
 
       body: SafeArea(
         child: Container(
           color: Colors.white30,
-          child: Calendar(
-            startOnMonday: true,
-            selectedColor: Colors.blue,
-            todayColor: Colors.red,
-            eventColor: Colors.blue,
-            eventDoneColor: Colors.green,
-            bottomBarColor: Colors.deepOrange,
-            onRangeSelected: (range) {
-              print('selected Day ${range.from},${range.to}');
-            },
-            onDateSelected: (date) {
-              return _handleData(date);
-            },
-            events: events,
-            onEventSelected: (event) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TaskDetails(
-                            event: event,
-                          )));
-            },
-            isExpanded: true,
-            dayOfWeekStyle: const TextStyle(
-              fontSize: 15,
-              color: Colors.black12,
-              fontWeight: FontWeight.w100,
+          child: Flexible(
+            child: Calendar(
+              startOnMonday: true,
+              selectedColor: Colors.blue,
+              todayColor: Colors.red,
+              eventColor: Colors.blue,
+              eventDoneColor: Colors.green,
+              bottomBarColor: Colors.deepOrange,
+              onDateSelected: (date) {
+                return _handleData(date);
+              },
+              events: events,
+              onEventSelected: (event) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TaskDetails(
+                              event: event,
+                            )));
+              },
+
+              isExpanded: true,
+
+              dayOfWeekStyle: const TextStyle(
+                fontSize: 15,
+                color: Colors.black12,
+                fontWeight: FontWeight.w100,
+              ),
+              bottomBarTextStyle: const TextStyle(
+                color: Colors.white,
+              ),
+              hideBottomBar: false,
+              hideArrows: false,
+              weekDays: const ['Sat', 'Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+              // locale: "ar",
             ),
-            bottomBarTextStyle: const TextStyle(
-              color: Colors.white,
-            ),
-            hideBottomBar: false,
-            hideArrows: false,
-            weekDays: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
           ),
         ),
       ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print(selectedDay);
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -131,6 +135,83 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+
+      drawer: SizedBox(
+        width: 250,
+        child: Drawer(
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: [
+               DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Image.asset('assets/images/createTask.png'),
+
+              ),
+              ListTile(
+                title: const Text('schedule'),
+                leading: Badge(
+                  badgeContent: Text('${selectedEvent.length}'),
+                  child: const Icon(Icons.schedule , color: Colors.blueAccent,),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+
+                  Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              MyHomePage(title: "Events")));
+                },
+              ),
+
+              ListTile(
+                title: const Text("Adding Event"),
+                leading: const Icon(Icons.add , color: Colors.blueAccent,),
+                onTap: () {
+                  Navigator.pop(context);
+
+                  Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              AddingNewTask(selectedDay: selectedDay)));
+
+                },
+              ),
+
+              ListTile(
+                title: const Text('Habits'),
+                leading: const Icon(Icons.heat_pump , color: Colors.blueAccent,),
+                onTap: () {
+                  Navigator.pop(context);
+                  //
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) =>
+                  //             MyHomePage(title: "Events")));
+                },
+              ),
+
+
+              ListTile(
+                title: const Text('My Todo List'),
+                leading: const Icon(Icons.list ,  color: Colors.blueAccent,),
+                onTap: () {
+                  Navigator.pop(context);
+
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) =>
+                  //             MyHomePage(title: "Events")));
+                },
+              ),
+
+
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
