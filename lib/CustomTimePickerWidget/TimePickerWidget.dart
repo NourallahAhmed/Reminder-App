@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class TimePickerWidget extends StatefulWidget {
@@ -11,17 +12,6 @@ class TimePickerWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() =>
       _TimePickerWidgetState(hourSelected, minSelected);
-
-  late TimeOfDay _selectedTime;
-
-  //
-  // TimeOfDay getSelectedTime() {
-  //   _selectedTime = TimeOfDay(
-  //       hour: int.parse(hourSelected.text),
-  //       minute: int.parse(minSelected.text));
-  //
-  //   return _selectedTime;
-  // }
 }
 
 class _TimePickerWidgetState extends State<TimePickerWidget> {
@@ -29,26 +19,32 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
 
   TextEditingController hourSelected;
   TextEditingController minSelected;
+  var isAM = false;
+  var isPM = false;
 
   _TimePickerWidgetState(this.hourSelected, this.minSelected);
 
   @override
   Widget build(context) {
     return Scaffold(
+
       body: Container(
-        // color: Colors.blue.shade200,
+        color:  Colors.transparent,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+
           children: [
             Text(
               widget.title,
               style: const TextStyle(color: Colors.blue),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                /// HR
                 Flexible(
                   child: TextField(
+                    maxLength: 2,
                     decoration: const InputDecoration(
                         isDense: true,
                         contentPadding: EdgeInsets.all(4),
@@ -61,12 +57,13 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
                     keyboardType: TextInputType.number,
                   ),
                 ),
-                const Text(" : "),
+
+                /// MIN
                 Flexible(
                   child: TextField(
-
+                    maxLength: 2,
                     decoration: const InputDecoration(
-                      isDense: true,
+                        isDense: true,
                         contentPadding: EdgeInsets.all(4),
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -77,6 +74,48 @@ class _TimePickerWidgetState extends State<TimePickerWidget> {
                     keyboardType: TextInputType.number,
                   ),
                 ),
+
+                /// AM / PM
+                Flexible(
+                    child: Column(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          if (isPM) {
+                            isPM = false;
+                            isAM = true;
+                          } else {
+                            isAM = false;
+                            isPM = true;
+                          }
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: isAM ? Colors.grey.shade400 : Colors.grey,
+                      ),
+                      child: const Text("AM",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            if (isPM) {
+                              isPM = false;
+                              isAM = true;
+                            } else {
+                              isAM = false;
+                              isPM = true;
+                            }
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: isPM ? Colors.grey.shade400 : Colors.grey,
+                        ),
+                        child: const Text("PM",
+                            style: TextStyle(fontWeight: FontWeight.bold))),
+                  ],
+                ))
               ],
             ),
           ],

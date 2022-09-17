@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_calendar/clean_calendar_event.dart';
 
-class TaskDetails extends StatefulWidget {
+class Event_Details extends StatefulWidget {
   final CleanCalendarEvent event;
 
-  TaskDetails({Key? key, required this.event}) : super(key: key);
+  Event_Details({Key? key, required this.event}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _TaskDetailsState();
+  State<StatefulWidget> createState() => _Event_DetailsState();
 }
 
-class _TaskDetailsState extends State<TaskDetails> {
+class _Event_DetailsState extends State<Event_Details> {
   var taskDesc = TextEditingController();
   var taskSummary = TextEditingController();
   var taskIsDone = TextEditingController();
@@ -23,7 +23,7 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.event.summary} task"),
+        title: Text(widget.event.summary),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -42,21 +42,29 @@ class _TaskDetailsState extends State<TaskDetails> {
 
       ),
       body: Container(
-        // color: widget.event.color,
         height: double.infinity,
-        // width: double.infinity,
+        decoration: BoxDecoration(
 
+              gradient: LinearGradient(
+                  begin: FractionalOffset.topCenter,
+                  end: FractionalOffset.bottomCenter,
+                  colors: [
+                    Colors.blueAccent.withOpacity(0.0),
+                    Colors.white,
+                  ],
+                  stops: const [
+                    0.0,
+                    1.0
+                  ])
+            // color: Colors.blue.shade200
+          ),
         padding: const EdgeInsets.all(50.0),
         // margin: const EdgeInsets.all(10.0) ,
         child: SingleChildScrollView(
-
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SizedBox(
-                  width: 250,
-                  height: 100,
-                  child: TextField(
+             TextField(
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -69,7 +77,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                     ),
                     controller: taskDesc,
                     enabled: IsEditable,
-                  )),
+                  ),
               SizedBox(
                   width: 250,
                   height: 100,

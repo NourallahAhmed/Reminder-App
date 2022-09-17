@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list/AddingTask/Creating_Event.dart';
+import 'package:todo_list/Event_Details/Event_Details_Display.dart';
+import 'package:todo_list/Event_Details/Event_details_screen.dart';
 
 import '../AddingTask/AddingNewTask.dart';
 import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
 
-import '../TaskDetails/task_details_screen.dart';
 import 'package:badges/badges.dart';
 
 
@@ -57,8 +59,9 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       selectedDay = date;
       selectedEvent = events[selectedDay] ?? [];
-      //((a, b) => a.length.compareTo(b.length));
-      // selectedEvent.any((element) => element.isDone);
+
+      /// sort the events based on IsDone
+      /// where the done events will be in the bottom and the un done events will be the top
       selectedEvent.sort((a, b) {
         if (b.isDone) {
           return -1;
@@ -74,6 +77,11 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+  refresh() {
+    setState(() {
+      _handleData(selectedDay);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +92,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
       body: SafeArea(
         child: Container(
-          color: Colors.white30,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: FractionalOffset.topCenter,
+                  end: FractionalOffset.bottomCenter,
+                  colors: [
+                    Colors.blueAccent.withOpacity(0.1),
+                    Colors.white,
+                  ],
+                  stops: const [
+                    0.0,
+                    1.0
+                  ])
+            // color: Colors.blue.shade200
+          ),
           child: Flexible(
             child: Calendar(
               startOnMonday: true,
@@ -101,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => TaskDetails(
+                        builder: (context) => Event_Details_Display(
                               event: event,
                             )));
               },
@@ -131,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      AddingNewTask(selectedDay: selectedDay)));
+                      Creating_Event(selectedDay: selectedDay, notifyParent: refresh,)));
         },
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -150,11 +171,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Image.asset('assets/images/createTask.png'),
 
               ),
+
               ListTile(
                 title: const Text('schedule'),
-                leading: Badge(
-                  badgeContent: Text('${selectedEvent.length}'),
-                  child: const Icon(Icons.schedule , color: Colors.blueAccent,),
+                leading:  const Icon(Icons.schedule , color: Colors.blueAccent,),
+                trailing: Badge(
+                  badgeContent: Text('${MyHomePage.events[DateTime(
+                      DateTime.now().year, DateTime.now().month, DateTime.now().day, 10, 0)]?.length ?? 0 }'),
+                  child: null ,
                 ),
                 onTap: () {
                   Navigator.pop(context);
@@ -167,7 +191,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
 
               ListTile(
-                title: const Text("Adding Event"),
+                title: const Text("Creating Event"),
                 leading: const Icon(Icons.add , color: Colors.blueAccent,),
                 onTap: () {
                   Navigator.pop(context);
@@ -175,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.push(context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              AddingNewTask(selectedDay: selectedDay)));
+                              Creating_Event(selectedDay: selectedDay, notifyParent: refresh,)));
 
                 },
               ),
@@ -192,7 +216,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   //             MyHomePage(title: "Events")));
                 },
               ),
-
 
               ListTile(
                 title: const Text('My Todo List'),

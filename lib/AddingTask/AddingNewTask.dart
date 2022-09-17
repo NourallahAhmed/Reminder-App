@@ -4,9 +4,12 @@ import 'package:todo_list/CustomTimePickerWidget/TimePickerWidget.dart';
 import 'package:todo_list/HomePage/home_page.dart';
 
 class AddingNewTask extends StatefulWidget {
+
+  final Function() notifyParent;
+
   final DateTime selectedDay;
 
-  const AddingNewTask({Key? key, required this.selectedDay}) : super(key: key);
+  const AddingNewTask({Key? key, required this.selectedDay , required this.notifyParent}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AddingNewTaskState(selectedDay);
@@ -18,6 +21,7 @@ class _AddingNewTaskState extends State<AddingNewTask> {
   var taskIsDone = TextEditingController();
   var taskStartTime = TextEditingController();
   var taskEndTime = TextEditingController();
+
   var taskIsAllDay = false;
 
   var taskLocation = TextEditingController();
@@ -144,7 +148,7 @@ class _AddingNewTaskState extends State<AddingNewTask> {
                       )),
                 ),
 
-                //TODO: Location
+                //TODO: Location  --> USE MAP
 
                 Container(
                   width: double.infinity,
@@ -215,29 +219,34 @@ class _AddingNewTaskState extends State<AddingNewTask> {
                 //TODO: Add time and Date
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
+                  // color: Colors.red,
+
+                  // padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
                   margin: const EdgeInsets.fromLTRB(10, 30, 10, 10),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.blueAccent),
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     // color: Colors.blue.shade200
                   ),
-                  child: Row(
+                  child:
+
+                  Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
+
                         Container(
-                          alignment: Alignment.topLeft,
+                          // alignment: Alignment.topLeft,
                           child: SizedBox(
-                            width: 100,
-                            height: 100,
+                            width: 200,
+                            height: 150,
                             child: TimePickerWidgetStartTime,
                           ),
                         ),
                         Container(
-                          alignment: Alignment.topRight,
+                          // alignment: Alignment.topRight,
                           child: SizedBox(
-                            width: 100,
-                            height: 100,
+                            width: 200,
+                            height: 150,
                             child: TimePickerWidgetEndTime,
                           ),
                         )
@@ -369,6 +378,8 @@ class _AddingNewTaskState extends State<AddingNewTask> {
 
               MyHomePage.events.addAll(instance);
             }
+            widget.notifyParent();
+
             Navigator.pop(context);
           },
           tooltip: 'Increment',
