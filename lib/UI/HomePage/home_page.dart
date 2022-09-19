@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list/AddingTask/Creating_Event.dart';
-import 'package:todo_list/Event_Details/Event_Details_Display.dart';
-import 'package:todo_list/Event_Details/Event_details_screen.dart';
+import 'package:todo_list/UI/Create_Event/Creating_Event.dart';
+import 'package:todo_list/UI/Event_Details/Event_Details_Display.dart';
+import 'package:todo_list/UI/Event_Details/Event_details_screen.dart';
 
-import '../AddingTask/AddingNewTask.dart';
+// import '../AddingTask/AddingNewTask.dart';
 import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
 
 import 'package:badges/badges.dart';
-
-
+import 'package:todo_list/UI/ToDo_List/ToDo_List.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -97,15 +96,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   begin: FractionalOffset.topCenter,
                   end: FractionalOffset.bottomCenter,
                   colors: [
-                    Colors.blueAccent.withOpacity(0.1),
-                    Colors.white,
-                  ],
+                Colors.blueAccent.withOpacity(0.1),
+                Colors.white,
+              ],
                   stops: const [
-                    0.0,
-                    1.0
-                  ])
-            // color: Colors.blue.shade200
-          ),
+                0.0,
+                1.0
+              ])
+              // color: Colors.blue.shade200
+              ),
           child: Flexible(
             child: Calendar(
               startOnMonday: true,
@@ -119,11 +118,23 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               events: events,
               onEventSelected: (event) {
+            /*    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Container(
+                  child: Column(
+                    children: [
+                      Text('${event.summary}'),
+                      Text('${event.description}'),
+                      Text('Start Time at ${event.startTime}'),
+                      Text('End Time at ${event.endTime}'),
+                    ],
+                  ),
+                )));*/
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => Event_Details_Display(
-                              event: event,
+                          event: event,
+
                             )));
               },
 
@@ -139,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               hideBottomBar: false,
               hideArrows: false,
-              weekDays: const ['Sat', 'Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+              weekDays: const ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
               // locale: "ar",
             ),
           ),
@@ -151,8 +162,10 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      Creating_Event(selectedDay: selectedDay, notifyParent: refresh,)));
+                  builder: (context) => Creating_Event(
+                        selectedDay: selectedDay,
+                        notifyParent: refresh,
+                      )));
         },
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -164,49 +177,56 @@ class _MyHomePageState extends State<MyHomePage> {
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: [
-               DrawerHeader(
+              DrawerHeader(
                 decoration: const BoxDecoration(
                   color: Colors.blue,
                 ),
                 child: Image.asset('assets/images/createTask.png'),
-
               ),
-
               ListTile(
                 title: const Text('schedule'),
-                leading:  const Icon(Icons.schedule , color: Colors.blueAccent,),
+                leading: const Icon(
+                  Icons.schedule,
+                  color: Colors.blueAccent,
+                ),
                 trailing: Badge(
-                  badgeContent: Text('${MyHomePage.events[DateTime(
-                      DateTime.now().year, DateTime.now().month, DateTime.now().day, 10, 0)]?.length ?? 0 }'),
-                  child: null ,
+                  badgeContent: Text(
+                      '${MyHomePage.events[DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 10, 0)]?.length ?? 0}'),
+                  child: null,
                 ),
                 onTap: () {
                   Navigator.pop(context);
 
-                  Navigator.push(context,
+                  Navigator.push(
+                      context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              MyHomePage(title: "Events")));
+                          builder: (context) => MyHomePage(title: "Events")));
                 },
               ),
-
               ListTile(
                 title: const Text("Creating Event"),
-                leading: const Icon(Icons.add , color: Colors.blueAccent,),
+                leading: const Icon(
+                  Icons.add,
+                  color: Colors.blueAccent,
+                ),
                 onTap: () {
                   Navigator.pop(context);
 
-                  Navigator.push(context,
+                  Navigator.push(
+                      context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              Creating_Event(selectedDay: selectedDay, notifyParent: refresh,)));
-
+                          builder: (context) => Creating_Event(
+                                selectedDay: selectedDay,
+                                notifyParent: refresh,
+                              )));
                 },
               ),
-
               ListTile(
                 title: const Text('Habits'),
-                leading: const Icon(Icons.heat_pump , color: Colors.blueAccent,),
+                leading: const Icon(
+                  Icons.heat_pump,
+                  color: Colors.blueAccent,
+                ),
                 onTap: () {
                   Navigator.pop(context);
                   //
@@ -216,21 +236,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   //             MyHomePage(title: "Events")));
                 },
               ),
-
               ListTile(
-                title: const Text('My Todo List'),
-                leading: const Icon(Icons.list ,  color: Colors.blueAccent,),
+                title: const Text('Todo List'),
+                leading: const Icon(
+                  Icons.list,
+                  color: Colors.blueAccent,
+                ),
                 onTap: () {
-                  Navigator.pop(context);
 
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) =>
-                  //             MyHomePage(title: "Events")));
+                  Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                           ToDo_List()));
                 },
               ),
-
-
             ],
           ),
         ),
