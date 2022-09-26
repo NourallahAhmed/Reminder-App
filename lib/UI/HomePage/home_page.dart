@@ -78,8 +78,12 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     Future.delayed(Duration.zero, () {
+
+
+      Provider.of<MyProvider>(context ,  listen : false ).getAllEvents();
+
       events = Provider.of<MyProvider>(context ,  listen : false ).events;
-      _handleData(selectedDay);
+      // _handleData(selectedDay);
       // selectedEvent = events[selectedDay] ?? [];
 
     });
@@ -132,10 +136,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 eventColor: Colors.blue,
                 eventDoneColor: Colors.green,
                 bottomBarColor: Colors.deepOrange,
-                // onDateSelected: (date) {
-                //   print(date);
-                //   return _handleData(date);
-                // },
+                onDateSelected: (date) {
+                  // print(date);
+
+                  selectedDay = date;
+                  // return _handleData(date);
+                },
                 events: events,
                 onEventSelected: (event) {
                   Navigator.push(

@@ -8,7 +8,7 @@ class DBHelper {
   /// singletone pattern
   static Database? _db;
 
-  static const int _versionEvents = 5;
+  static const int _versionEvents = 6;
   static const int _versionTodo = 1;
 
   static const String _tableNameEvents = "eventsDB";
@@ -32,9 +32,11 @@ class DBHelper {
           _pathEventsDB  ,
           version:  _versionEvents ,
           onCreate: ( Database db, int version) async {
+
+            ///*AUTOINCREMENT*/
             await db.execute(
           '''CREATE TABLE $_tableNameEvents(
-                  id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                  id INTEGER PRIMARY KEY , 
                   summary TEXT, 
                   description TEXT,
                   location TEXT, 
@@ -70,12 +72,33 @@ class DBHelper {
 
 
   static Future<int> updateEventCompletion(CleanCalendarEvent event) async{
-        print("insert");
-       return await _db!.rawUpdate(''' 
-       UPDATE $_tableNameEvents
-       SET isDone = ?
-       WHERE id = ?       
-       ''', [ event.isDone? 1 : 0,event.id]);
+        print("updateEventCompletion");
+
+
+        print("${event.id}  ${event.description} ${event.isDone}");
+        final update = await _db!.rawUpdate('''
+           UPDATE $_tableNameEvents
+           SET isDone = ?
+           WHERE id = ?
+           ''',  [1 , event.id]);
+
+
+        //
+        // int count = await _db!.update(_tableNameEvents, event.toJson(),
+        //   where: 'id = ?', whereArgs: [event.id] , conflictAlgorithm: ConflictAlgorithm.replace);
+
+
+        Future.delayed(Duration.zero, () async {
+          print("update $update");
+          final events = await DBHelper.getEvents();
+          print(events.map((e) => "${event.id} ${e.description} ${e.isDone}"));
+
+        });
+
+
+
+
+        return update;
   }
 
 
@@ -128,7 +151,8 @@ class DBHelper {
     print("guery");
     final List<Map<String, dynamic>> events = await _db!.query(_tableNameEvents);
     var eventList =  List.generate( events.length, (i) {
-      return CleanCalendarEvent(events[i]['summary'],
+      return CleanCalendarEvent(events[i]['id'],
+        events[i]['summary'],
         startTime: DateTime.parse( events[i]['startTime']),
         endTime:  DateTime.parse(events[i]['endTime']),
         description: events[i]['description'],

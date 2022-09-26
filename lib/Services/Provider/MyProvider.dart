@@ -26,16 +26,16 @@ class MyProvider with ChangeNotifier {
 
   MyProvider(){
     getAllEvents();
-
   }
 
   //todo: func to get all events
   Future<Map<DateTime, List<CleanCalendarEvent>>> getAllEvents() async {
+
+    events.clear();
     final allEvents = await DBHelper.getEvents();
 
     if (allEvents.isNotEmpty) {
       convertToMap(allEvents);
-      print("from Provider $events");
       notifyListeners();
     }
 
@@ -53,13 +53,16 @@ class MyProvider with ChangeNotifier {
 
 
   void handleEvent(CleanCalendarEvent event) {
+
+    print(DateTime(
+        event.startTime.year, event.startTime.month, event.startTime.day));
+
     if (events.containsKey(DateTime(
         event.startTime.year, event.startTime.month, event.startTime.day))) {
       events.update(
           DateTime(event.startTime.year, event.startTime.month,
               event.startTime.day),
               (value) => value + [event]);
-      notifyListeners();
     } else {
       Map<DateTime, List<CleanCalendarEvent>> instance = {
         DateTime(event.startTime.year, event.startTime.month,
@@ -68,7 +71,6 @@ class MyProvider with ChangeNotifier {
         ]
       };
       events.addAll(instance);
-      notifyListeners();
     }
   }
 
@@ -81,7 +83,7 @@ class MyProvider with ChangeNotifier {
 
     DBHelper.insertEvent(event);
 
-    handleEvent(event);
+    // handleEvent(event);
 
     notifyListeners();
 
@@ -94,7 +96,7 @@ class MyProvider with ChangeNotifier {
 
 
     //remove from local list
-    events.remove(event);
+    // events.remove(event);
 
 
     // notify the providers
@@ -129,9 +131,9 @@ class MyProvider with ChangeNotifier {
     DBHelper.updateEventCompletion(event);
 
 
-    events.removeWhere((key, value) => value.map((e) => e.id) == event.id);   //remove the previous one
+    // events.removeWhere((key, value) => value.map((e) => e.id) == event.id);   //remove the previous one
 
-    handleEvent(event);
+    // handleEvent(event);
 
     notifyListeners();
 

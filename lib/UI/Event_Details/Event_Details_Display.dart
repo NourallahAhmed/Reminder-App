@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_calendar/clean_calendar_event.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_list/Services/Provider/MyProvider.dart';
+
+import '../Edit_Event/Edit_Events.dart';
 
 class Event_Details_Display extends StatefulWidget {
   final CleanCalendarEvent event;
@@ -19,13 +23,34 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text("Events"),
+          title: Text(" ${widget.event.description}", style: TextStyle(fontSize: 30),),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.pop(context);
             },
-          )),
+          )   ,
+          actions: [ IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              Provider.of<MyProvider>(context, listen: false).deleteEvent(widget.event);
+            },
+          ) ,
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (builder) => Edit_Event(selectedDay:
+                DateTime(widget.event.startTime.year, widget.event.startTime.month,widget.event.startTime.day,),
+                event: widget.event,
+                )));
+              },
+            )
+
+
+          ]
+
+
+      ),
       body: Container(
         height: double.infinity,
         width: double.infinity,
@@ -35,7 +60,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                 end: FractionalOffset.bottomCenter,
                 colors: [
                   Colors.blue.withOpacity(0.1),
-                  Colors.blueGrey.shade400,
+                  Colors.white70,
                 ],
                 stops: const [
                   0.0,
@@ -67,7 +92,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                 decoration: BoxDecoration(
                   color: widget.event.description.isEmpty
                       ? Colors.transparent
-                      : Colors.blue.shade100,
+                      : Colors.white30,
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: Column(
@@ -82,7 +107,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                       fontSize: 20,
-                                      fontWeight: FontWeight.normal,
+                                      fontWeight: FontWeight.bold,
                                       color:Colors.black54)),
                             ],
                           ),
@@ -106,7 +131,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                 decoration: BoxDecoration(
                   color: widget.event.summary.isEmpty
                       ? Colors.transparent
-                      : Colors.blue.shade100,
+                      : Colors.white30,
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: Column(
@@ -120,7 +145,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                         textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.normal,
+                            fontWeight: FontWeight.bold,
                             color:Colors.black54),),
                       ],
                     ),
@@ -140,7 +165,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                 padding: const EdgeInsets.all(8.0),
                 margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
+                  color: Colors.white30,
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: Padding(
@@ -153,7 +178,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                                 textAlign: TextAlign.start,
                                 style: const TextStyle(
                                     fontSize: 20,
-                                    fontWeight: FontWeight.normal,
+                                    fontWeight: FontWeight.bold,
                                     color:Colors.black54),
                               ),
                     ],
@@ -164,7 +189,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                 padding: const EdgeInsets.all(8.0),
                 margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
+                  color: Colors.white30,
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
                 child: Row(
@@ -179,7 +204,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                                   'End Time  \t' , textAlign: TextAlign.start,
                                     style: TextStyle(
                                         fontSize: 20,
-                                        fontWeight: FontWeight.normal,
+                                        fontWeight: FontWeight.bold,
                                         color:Colors.black54)),
                                 Text('${widget.event.endTime
                                     .hour} : ${widget.event.endTime.minute}',
@@ -206,20 +231,33 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                 decoration: BoxDecoration(
                   color: widget.event.location.isEmpty
                       ? Colors.transparent
-                      : Colors.blue.shade100,
+                      : Colors.white30,
                   borderRadius: const BorderRadius.all(Radius.circular(10)),
                 ),
-                child: widget.event.location.isNotEmpty ?  Row(
+                child: widget.event.location.isNotEmpty ?
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                         Text(
+                         const Text(
+                             "Location  ",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color:Colors.black54),
+                            ),
+                          Text(
                               widget.event.location,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.normal,
                                   color:Colors.black54),
                             ),
@@ -232,18 +270,20 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
               Container(
                 padding: const EdgeInsets.all(8.0),
                 margin: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                decoration: const BoxDecoration(
+                  color: Colors.white30,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
                 child: Padding(
+
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Is Done : '  , textAlign: TextAlign.center,
+                      const Text('Is completed: '  , textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 20,
-                              fontWeight: FontWeight.normal,
+                              fontWeight: FontWeight.bold,
                               color:Colors.black54)),
 
                       Text('${widget.event.isDone
@@ -255,6 +295,27 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                                     fontWeight: FontWeight.bold,
                                     color: widget.event.isDone ? Colors.green : Colors.red),
                               ),
+
+                      widget.event.isDone ?
+                      Container() :
+                      Checkbox(
+                        checkColor: Colors.blue,
+                        activeColor: Colors.white,
+                        value:  widget.event.isDone ,
+                        onChanged: (value) {
+
+
+                          setState(() {
+                            widget.event.isDone
+                                ?  widget.event.isDone = false
+                                : widget.event.isDone = true;
+                          });
+
+
+                          Provider.of<MyProvider>(context ,  listen: false).eventIsCompleted(widget.event);
+
+                        },
+                      ) ,
                     ],
                   ),
                 ),
