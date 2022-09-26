@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
-import 'package:todo_list/UI/HomePage/home_page.dart';
-import 'package:todo_list/main.dart';
+import 'package:todo_list/Services/Provider/MyProvider.dart';
+
+import 'package:provider/provider.dart';
 
 class Creating_Event extends StatefulWidget {
   final Function() notifyParent;
@@ -617,32 +618,14 @@ class _Creating_EventState extends State<Creating_Event> {
                           event.isAllDay = taskIsAllDay;
                           event.color = selectedColor;
 
-
-
-
-                          if (MyHomePage.events.containsKey(DateTime(
-                              selectedDay.year,
-                              selectedDay.month,
-                              selectedDay.day))) {
-                            MyHomePage.events.update(
-                                DateTime(selectedDay.year, selectedDay.month,
-                                    selectedDay.day),
-                                (value) => value + [event]);
-                          } else {
-                            Map<DateTime, List<CleanCalendarEvent>> instance = {
-                              DateTime(selectedDay.year, selectedDay.month,
-                                  selectedDay.day): [
-                                event,
-                              ]
-                            };
-
-                            MyHomePage.events.addAll(instance);
+                          Provider.of<MyProvider>(context , listen : false).insertEvent(event);
+                            // DBHelper.insertEvent(event);
                           }
                           widget.notifyParent();
 
                           Navigator.pop(context);
                         }
-                      },
+                      ,
                       child: const Text('Create'),
                     ),
                   ),

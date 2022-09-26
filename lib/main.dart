@@ -1,6 +1,11 @@
+// import 'dart:js';
+
 import 'package:flutter/material.dart';
+import 'package:todo_list/Services/Provider/MyProvider.dart';
 // import 'package:todo_list/AddingTask/AddingNewTask.dart';
+import 'Services/DataBase/DB_Helper.dart';
 import 'UI/HomePage/home_page.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -19,8 +24,19 @@ Map<int, Color> color = {
 
 MaterialColor colorCustom = MaterialColor(0xFFFF5C57, color);
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized(); /// -> You only need to call this method if you need the binding to be initialized before calling runApp
+  await DBHelper.initDB();
+
+  runApp(
+      ChangeNotifierProvider(
+        create: (context) => MyProvider(),
+        child:  const MyApp(),
+      ),
+  );
+
+      // const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -34,9 +50,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home:  MyHomePage(title: 'Events'),
+      home:
+     /* ChangeNotifierProvider<MyProvider>(
+      create: (context) => MyProvider(),
+      builder: (buildContext, child) {
+      return*/ MyHomePage(title: "Events")
+
+      // })
 
 
     );
+    }
   }
-}
+

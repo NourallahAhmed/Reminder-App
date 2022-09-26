@@ -6,6 +6,10 @@ import '../../Model/toDoModel.dart';
 import 'package:intl/intl.dart';
 
 class ToDo_List extends StatefulWidget {
+  // static int listCount = ToDoList[DateTime(
+  //     DateTime.now().year, DateTime.now().month, DateTime.now().day, 02, 0)]?.length  ?? 0;
+
+
   ToDo_List({Key? key}) : super(key: key);
   Map<DateTime, List<ToDo>> ToDoList = {
     DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 02,
@@ -53,6 +57,7 @@ class ToDo_List extends StatefulWidget {
 }
 
 class _ToDo_ListState extends State<ToDo_List> {
+
   DateTime selectedDay = DateTime(
       DateTime.now().year, DateTime.now().month, DateTime.now().day, 02, 0);
 
@@ -141,20 +146,7 @@ class _ToDo_ListState extends State<ToDo_List> {
               ],
             ),
           ),
-          //       Container(
-          //         height: 100,
-          //         child: CalendarDatePicker(
-          //
-          //         initialDate: DateTime.now(),
-          //         firstDate: DateTime(2020, 1, 1),
-          //         lastDate: DateTime(2025, 12, 30),
-          //         onDateChanged: (DateTime value) {
-          //           print(value);
-          //           _handleData(value);
-          //         },
-          //
-          // ),
-          //       ),
+
           SizedBox(
             height: 150,
             child: TableCalendar(
