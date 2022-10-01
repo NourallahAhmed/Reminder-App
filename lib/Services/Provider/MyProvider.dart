@@ -9,19 +9,7 @@ class MyProvider with ChangeNotifier {
   // static MyProvider? instance ;
   Map<DateTime, List<CleanCalendarEvent>> events =
       <DateTime, List<CleanCalendarEvent>> {
-    // DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day): [
-    //   CleanCalendarEvent('Event A',
-    //       startTime: DateTime(DateTime.now().year, DateTime.now().month,
-    //           DateTime.now().day, 10, 0),
-    //       endTime: DateTime(DateTime.now().year, DateTime.now().month,
-    //           DateTime.now().day, 12, 0),
-    //       description: 'A special event',
-    //       color: Colors.blue,
-    //       isDone: true),
-    // ]
   };
-
-
 
 
   MyProvider(){

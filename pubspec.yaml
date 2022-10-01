@@ -43,6 +43,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   flutter_clean_calendar: ^1.1.0
+  flutter_local_notifications: ^11.0.1
+  rxdart: ^0.27.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -66,6 +69,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - packages/timezone/data/latest.tzf
     - assets/
 #    - images/createTask.png
 

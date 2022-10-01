@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
+import 'package:todo_list/Services/Notification_Api.dart';
 import 'package:todo_list/Services/Provider/MyProvider.dart';
 
 import 'package:provider/provider.dart';
+import 'package:todo_list/UI/HomePage/home_page.dart';
+import 'package:intl/intl.dart';
+
 
 class Creating_Event extends StatefulWidget {
   final Function() notifyParent;
@@ -50,7 +54,21 @@ class _Creating_EventState extends State<Creating_Event> {
 
   _Creating_EventState(this.selectedDay);
 
+  initState(){
+    Notification_Api.init();
+    listenNotifictions();
+  }
 
+  void listenNotifictions(){
+    Notification_Api.onNotifications.stream.listen(onClickedNotification);
+  }
+
+  void onClickedNotification(String? payload) {
+    Navigator.of(context)
+        .push(MaterialPageRoute
+      (builder: (context) => MyHomePage(title: "Events"))
+    );
+  }
 
 
   @override
@@ -621,10 +639,31 @@ class _Creating_EventState extends State<Creating_Event> {
                           event.isAllDay = taskIsAllDay;
                           event.color = selectedColor;
 
+
                           Provider.of<MyProvider>(context , listen : false).insertEvent(event);
-                            // DBHelper.insertEvent(event);
+
+                          //todo: notifiction
+
+                          // Notification_Api.showNotification(
+                          //     title: event.description,
+                          //     body: "${DateFormat.yMMMMd().format(event.startTime).toString()} \n ${event.summary}",
+                          //     payload: DateFormat.yMMMMd().format(event.startTime).toString());
+
+
+
+
+                          Notification_Api.showScheduleNotification(
+                              title: event.description,
+                              body: """
+                              ${DateFormat.yMMMMd().format(event.startTime).toString()} 
+                              \n ${event.summary} 
+                              \n from ${event.startTime.hour} :  ${event.startTime.minute} 
+                              \n to   ${event.endTime.hour} :  ${event.endTime.minute} 
+                              
+                              """,
+                              payload: DateFormat.yMMMMd().format(event.startTime).toString(),
+                              shcedauleDate: event.startTime);
                           }
-                          widget.notifyParent();
 
                           Navigator.pop(context);
                         }
