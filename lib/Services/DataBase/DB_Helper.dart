@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
+import '../../Model/toDoModel.dart';
 
 
 class DBHelper {
 
   /// singletone pattern
   static Database? _db;
+  static Database? _db_ToDO;
 
   static const int _versionEvents = 6;
-  static const int _versionTodo = 1;
+  static const int _versionTodo = 2;
 
   static const String _tableNameEvents = "eventsDB";
   static const String _tableNameTodo = "todoDB";
@@ -22,12 +24,16 @@ class DBHelper {
 
     try{
       // getDatabasesPath
+      //todo : eventsDB
       String _pathEventsDB = await getDatabasesPath() + _tableNameEvents;
-      // String _pathEventsTodo = await getDatabasesPath() + _tableNameTodo;
+
+      //todo :  todoListDB
+      String _pathTodoDB = await getDatabasesPath() + _tableNameTodo;
+
       debugPrint("in DataBase Path");
 
 
-      //openDataBase
+      //openDataBase eventsDB
       _db = await openDatabase(
           _pathEventsDB  ,
           version:  _versionEvents ,
@@ -48,6 +54,26 @@ class DBHelper {
                   )''',
         ).catchError((error) => print(error.toString()));;
           });
+
+
+      //openDataBase ToDoDB
+      _db_ToDO = await openDatabase(
+          _pathTodoDB  ,
+          version:  _versionTodo ,
+          onCreate: ( Database db, int version) async {
+
+            ///*AUTOINCREMENT*/
+            await db.execute(
+          '''CREATE TABLE $_tableNameTodo(
+                  id INTEGER PRIMARY KEY , 
+                  title TEXT, 
+                  description TEXT,
+                  startTime TEXT,
+                  endTime TEXT,
+                  isDone INTEGER
+                  )''',
+        ).catchError((error) => print(error.toString()));;
+          });
     }
     catch(e){
       print("error $e");
@@ -56,114 +82,17 @@ class DBHelper {
   }
 
 
+  static Database? getTodoDBInstance() => _db_ToDO;
+  static String? getTodoName() => _tableNameTodo;
 
-  static Future<int> insertEvent(CleanCalendarEvent event) async{
-        print("insert");
-        final insert = await _db!.insert(_tableNameEvents ,  event.toJson());
-        print(await DBHelper.getEvents());
-        return insert;
-  }
-
-
-  static Future<int> deleteEvent(CleanCalendarEvent event) async{
-        print("insert");
-       return await _db!.delete(_tableNameEvents, where: "id = ?" ,whereArgs: [event.id]);
-  }
-
-
-  static Future<int> updateEventCompletion(CleanCalendarEvent event) async{
-        print("updateEventCompletion");
-
-
-        print("${event.id}  ${event.description} ${event.isDone}");
-        final update = await _db!.rawUpdate('''
-           UPDATE $_tableNameEvents
-           SET isDone = ?
-           WHERE id = ?
-           ''',  [1 , event.id]);
-
-
-        //
-        // int count = await _db!.update(_tableNameEvents, event.toJson(),
-        //   where: 'id = ?', whereArgs: [event.id] , conflictAlgorithm: ConflictAlgorithm.replace);
-
-
-        Future.delayed(Duration.zero, () async {
-          print("update $update");
-          final events = await DBHelper.getEvents();
-          print(events.map((e) => "${event.id} ${e.description} ${e.isDone}"));
-
-        });
+  static Database? getEventsDBInsteance() => _db;
+  static String? getEventsName() => _tableNameEvents;
 
 
 
 
-        return update;
-  }
-
-
-  static Future<int> updateEvent(CleanCalendarEvent event) async{
-        print("insert");
-       return await _db!.rawUpdate(''' 
-       
-       UPDATE $_tableNameEvents
-       SET isDone = ?
-       SET summery = ?
-       SET description = ?
-       SET location = ?
-       SET startTime = ?
-       SET endTime = ?
-       SET isAllDay = ?
-       WHERE id = ?    
-          
-       ''', [
-         event.isDone? 1 : 0,
-         event.summary,
-         event.description,
-         event.location,
-         event.startTime,
-         event.endTime,
-         event.isAllDay? 1: 0,
-         event.id]);
-  }
-
-
-  // static Future<List<CleanCalendarEvent>> getEvents() async{
-  //   print("guery");
-  //   final List<Map<String, dynamic>> events = await _db!.query(_tableNameEvents);
-  //   return List.generate( events.length, (i) {
-  //     return CleanCalendarEvent(events[i]['summary'],
-  //         startTime: DateTime.parse( events[i]['startTime']),
-  //         endTime:  DateTime.parse(events[i]['endTime']),
-  //         description: events[i]['description'],
-  //         color: Color(int.parse(events[i]['color'])),
-  //         location:  events[i]['location'],
-  //         isAllDay:  events[i]['isAllDay'] == 0 ? false : true,
-  //         isDone:  events[i]['isDone'] == 0 ? false : true,
-  //     );
-  //   });
-  // }
 
 
 
 
-  static Future<List<CleanCalendarEvent>> getEvents() async{
-    print("guery");
-    final List<Map<String, dynamic>> events = await _db!.query(_tableNameEvents);
-    var eventList =  List.generate( events.length, (i) {
-      return CleanCalendarEvent(events[i]['id'],
-        events[i]['summary'],
-        startTime: DateTime.parse( events[i]['startTime']),
-        endTime:  DateTime.parse(events[i]['endTime']),
-        description: events[i]['description'],
-        color: Color(int.parse(events[i]['color'])),
-        location:  events[i]['location']  ,
-        isAllDay:  events[i]['isAllDay'] == 0 ? false : true,
-        isDone:  events[i]['isDone'] == 0 ? false : true,
-      );
-    });
-    //
-
-    return eventList ;
-  }
 }

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
-import 'package:todo_list/Services/Notification_Api.dart';
+import 'package:todo_list/Services/Notifications/Notification_Api.dart';
 import 'package:todo_list/Services/Provider/MyProvider.dart';
 
 import 'package:provider/provider.dart';
 import 'package:todo_list/UI/HomePage/home_page.dart';
 import 'package:intl/intl.dart';
 
+
+// import 'package:geocoder/geocoder.dart';
+import 'package:google_maps_webservice/places.dart';
 
 class Creating_Event extends StatefulWidget {
   final Function() notifyParent;
@@ -24,16 +27,12 @@ class Creating_Event extends StatefulWidget {
 class _Creating_EventState extends State<Creating_Event> {
   final _formKey = GlobalKey<FormState>();
 
+  // final kGoogleApiKey = "AIzaSyDC2Xz1DDx81Hu5MmCYR6XnEybSNF3YXcE";
   var taskDesc = TextEditingController();
   var taskSummary = TextEditingController();
   var taskIsDone = TextEditingController();
   var taskStartTime = TextEditingController();
   var taskEndTime = TextEditingController();
-  var hourSelected_Start = TextEditingController();
-  var minSelected_Start = TextEditingController();
-
-  var hourSelected_End = TextEditingController();
-  var minSelected_End = TextEditingController();
   var taskLocation = TextEditingController();
 
   var taskIsAllDay = false;
@@ -44,32 +43,64 @@ class _Creating_EventState extends State<Creating_Event> {
 
   DateTime selectedDay;
 
-  //MARK: TimePicker
+  //MARK: NEW TIME PICKER
 
-  var isAM_Start = false;
-  var isPM_Start = false;
+  TimeOfDay _startTime = TimeOfDay(hour: 7, minute: 15);
+  TimeOfDay _endTime = TimeOfDay(hour: 7, minute: 15);
+  
+  //todo change to 5:00 pm format
+  String formatTimeOfDay(TimeOfDay tod) {
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    final format = DateFormat.jm();  //"6:00 AM"
+    return format.format(dt);
+  }
 
-  var isAM_End = false;
-  var isPM_End = false;
+
+  void _selectTime(int num) async {
+    if (num == 2) {
+      final TimeOfDay? newTime = await showTimePicker(
+        context: context,
+        initialTime: _endTime,
+      );
+
+      if (newTime != null) {
+        setState(() {
+          _endTime = newTime;
+          print(_endTime);
+        });
+      }
+    } else {
+      final TimeOfDay? newTime = await showTimePicker(
+        context: context,
+        initialTime: _startTime,
+      );
+
+      if (newTime != null) {
+        setState(() {
+          _startTime = newTime;
+          print(_startTime);
+        });
+      }
+    }
+  }
 
   _Creating_EventState(this.selectedDay);
 
-  initState(){
+  initState() {
+
     Notification_Api.init();
     listenNotifictions();
   }
 
-  void listenNotifictions(){
+  void listenNotifictions() {
     Notification_Api.onNotifications.stream.listen(onClickedNotification);
   }
 
   void onClickedNotification(String? payload) {
-    Navigator.of(context)
-        .push(MaterialPageRoute
-      (builder: (context) => MyHomePage(title: "Events"))
-    );
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => MyHomePage(title: "Events")));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +111,7 @@ class _Creating_EventState extends State<Creating_Event> {
           body: Container(
             height: double.infinity,
             decoration: BoxDecoration(
-                // border: Border.all(color: Colors.lightBlueAccent),
+                // border: Bord(color: Colors.lightBlueAccent),
                 // borderRadius: const BorderRadius.all(Radius.circular(10)),
                 gradient: LinearGradient(
                     begin: FractionalOffset.topCenter,
@@ -108,10 +139,9 @@ class _Creating_EventState extends State<Creating_Event> {
                           "Create New Task      ",
                           style: TextStyle(
                               color: Colors.blue,
-                              fontSize: 30,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold),
                         ),
-
                         RotationTransition(
                           turns: const AlwaysStoppedAnimation(15 / 360),
                           child: Image.network(
@@ -185,17 +215,14 @@ class _Creating_EventState extends State<Creating_Event> {
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
                       decoration: const InputDecoration(
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder:   OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                             borderSide:
                                 BorderSide(color: Colors.blueAccent, width: 1)),
                         hintText: "location",
                         // labelText: IsEditable ? widget.event.location : "",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                        prefixIcon: Icon(
-                          Icons.location_city,
-                          color: Colors.blue,
-                        ),
+                        prefixIcon: Icon(Icons.map, color: Colors.blue),
                       ),
                       controller: taskLocation,
                     ),
@@ -218,7 +245,7 @@ class _Creating_EventState extends State<Creating_Event> {
                         children: [
                           const Text(
                             "\t \t Is All Day : ",
-                            style: TextStyle(color: Colors.blue , fontSize: 20) ,
+                            style: TextStyle(color: Colors.blue, fontSize: 20),
                           ),
                           Checkbox(
                             checkColor: Colors.blue,
@@ -237,143 +264,7 @@ class _Creating_EventState extends State<Creating_Event> {
                     ),
                   ),
 
-                  /// Start Time
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      padding: EdgeInsets.all(8.0),
-                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 15),
-                      decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Colors.blueAccent, width: 1.0),
-                        borderRadius: const BorderRadius.all(Radius.circular(
-                                10.0) //                 <--- border radius here
-                            ),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: const [
-                              Text(
-                                "\t Start Time",
-                                style: TextStyle(color: Colors.blue ,fontSize:  20 ),
-                              ),
-                              Icon(
-                                Icons.timer,
-                                color: Colors.blue,
-                              )
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              /// HR
-                              Flexible(
-                                child: TextFormField(
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Fill this Feild';
-                                    }
-                                    return null;
-                                  },
-
-                                  maxLength: 2,
-                                  decoration: const InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.all(4),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)),
-                                          borderSide: BorderSide(width: 2)),
-                                      hintText: "${TimeOfDay.hoursPerDay}",
-                                      labelText: "hr"),
-                                  controller: hourSelected_Start,
-                                  keyboardType: TextInputType.number,
-                                ),
-                              ),
-
-                              /// MIN
-                              Flexible(
-                                child: TextFormField(
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Fill this Feild';
-                                    }
-                                    return null;
-                                  },
-
-                                  maxLength: 2,
-                                  decoration: const InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.all(4),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)),
-                                          borderSide: BorderSide(width: 2)),
-                                      hintText: "${TimeOfDay.minutesPerHour}",
-                                      labelText: "min"),
-                                  controller: minSelected_Start,
-                                  keyboardType: TextInputType.number,
-                                ),
-                              ),
-
-                              /// AM / PM
-                              Flexible(
-                                  child: Column(
-                                children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        if (isAM_Start) {
-                                          isAM_Start = false;
-                                          isPM_Start = true;
-                                        } else {
-                                          isAM_Start = true;
-                                          isPM_Start = false;
-                                        }
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      primary: isAM_Start
-                                          ? Colors.blue.shade200
-                                          : Colors.grey,
-                                    ),
-                                    child: const Text("AM",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          if (isPM_Start) {
-                                            isPM_Start = false;
-                                            isAM_Start = true;
-                                          } else {
-                                            isAM_Start = false;
-                                            isPM_Start = true;
-                                          }
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        primary: isPM_Start
-                                            ? Colors.blue.shade200
-                                            : Colors.grey,
-                                      ),
-                                      child: const Text("PM",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold))),
-                                ],
-                              ))
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  /// End Time
+                  ///  Time
 
                   Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -387,124 +278,49 @@ class _Creating_EventState extends State<Creating_Event> {
                                 10.0) //                 <--- border radius here
                             ),
                       ),
-                      child: Column(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Row(
-                            children: const [
-                              Text(
-                                "\t End Time",
-                                style: TextStyle(color: Colors.blue , fontSize: 20),
-                              ),
-                              Icon(
-                                Icons.timer,
-                                color: Colors.blue,
-                              )
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          Column(
                             children: [
-                              /// HR
-                              Flexible(
-                                child: TextFormField(
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Fill this Feild';
-                                    }
-                                    return null;
-                                  },
-
-                                  maxLength: 2,
-                                  decoration: const InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.all(4),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)),
-                                          borderSide: BorderSide(width: 2)),
-                                      hintText: "${TimeOfDay.hoursPerDay}",
-                                      labelText: "hr"),
-                                  controller: hourSelected_End,
-                                  keyboardType: TextInputType.number,
-                                ),
-                              ),
-
-                              /// MIN
-                              Flexible(
-                                child: TextFormField(
-                                  // The validator receives the text that the user has entered.
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Fill this Feild';
-                                    }
-                                    return null;
-                                  },
-
-                                  maxLength: 2,
-                                  decoration: const InputDecoration(
-                                      isDense: true,
-                                      contentPadding: EdgeInsets.all(4),
-                                      border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(10)),
-                                          borderSide: BorderSide(width: 2)),
-                                      hintText: "${TimeOfDay.minutesPerHour}",
-                                      labelText: "min"),
-                                  controller: minSelected_End,
-                                  keyboardType: TextInputType.number,
-                                ),
-                              ),
-
-                              /// AM / PM
-                              Flexible(
-                                  child: Column(
+                              Row(
                                 children: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        if (isAM_End) {
-                                          isAM_End = false;
-                                          isPM_End = true;
-                                        } else {
-                                          isAM_End = true;
-                                          isPM_End = false;
-                                        }
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      primary: isAM_End
-                                          ? Colors.blue.shade200
-                                          : Colors.grey,
-                                    ),
-                                    child: const Text("AM",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          if (isPM_End) {
-                                            isPM_End = false;
-                                            isAM_End = true;
-                                          } else {
-                                            isAM_End = false;
-                                            isPM_End = true;
-                                          }
-                                        });
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        primary: isPM_End
-                                            ? Colors.blue.shade200
-                                            : Colors.grey,
-                                      ),
-                                      child: const Text("PM",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold))),
+                                  const Text("\t Start Time ",
+                                      style: TextStyle(
+                                          color: Colors.blue, fontSize: 15)),
+                                  IconButton(
+                                      onPressed: () => _selectTime(1),
+                                      icon: const Icon(
+                                        Icons.timer,
+                                        color: Colors.blue,
+                                      ))
                                 ],
-                              ))
+                              ),
+                              Text(formatTimeOfDay(_startTime) ,
+                                  style: const TextStyle(
+                                      color: Colors.black54, fontSize: 15)),
                             ],
                           ),
+                          Column(children: [
+                            Row(
+                              children: [
+                              const  Text(
+                                  "\t End Time ",
+                                  style: TextStyle(
+                                      color: Colors.blue, fontSize: 15),
+                                ),
+                                IconButton(
+                                    onPressed: () => _selectTime(2),
+                                    icon: const Icon(
+                                      Icons.timer,
+                                      color: Colors.blue,
+                                    ))
+                              ],
+                            ),
+                            Text(formatTimeOfDay(_endTime) ,
+                                style: const TextStyle(
+                                color: Colors.black54, fontSize: 15))
+                          ])
                         ],
                       ),
                     ),
@@ -594,44 +410,35 @@ class _Creating_EventState extends State<Creating_Event> {
                     ),
                   ),
 
+
+                  //Button
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: ElevatedButton(
                       onPressed: () {
                         // Validate returns true if the form is valid, or false otherwise.
                         if (_formKey.currentState!.validate()) {
-                          // If the form is valid, display a snackbar. In the real world,
-                          // you'd often call a server or save the information in a database.
+                          print("condition");
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Processing Data')),
                           );
 
                           event = CleanCalendarEvent(
-
-                              UniqueKey().hashCode,
-                              taskSummary.text,
+                              UniqueKey().hashCode, taskSummary.text,
                               startTime: DateTime(
-                                  selectedDay.year,
-                                  selectedDay.month,
-                                  selectedDay.day,
-                                  int.parse(
-                                      isAM_Start ?    int.parse(hourSelected_Start.text) == 12 ? "00" :  hourSelected_Start.text :
-                                      int.parse(hourSelected_Start.text) < 12 ?
-                                      (int.parse(hourSelected_Start.text) + 12).toString() : hourSelected_End.text
-
-                                  ),
-                                  int.parse(minSelected_Start.text)),
+                               selectedDay.year,
+                                selectedDay.month,
+                                selectedDay.day,
+                                _startTime.hour,
+                                _startTime.minute,
+                              ),
                               endTime: DateTime(
-                                  selectedDay.year,
-                                  selectedDay.month,
-                                  selectedDay.day,
-                                  int.parse(
-                                      isAM_End ?    int.parse(hourSelected_End.text) == 12 ? "00" : hourSelected_End.text :
-                                      int.parse(hourSelected_End.text) < 12 ?
-                                      (int.parse(hourSelected_End.text) + 12).toString() : hourSelected_End.text
-
-                                  ),
-                                  int.parse(minSelected_End.text)));
+                                selectedDay.year,
+                                selectedDay.month,
+                                selectedDay.day,
+                                _endTime.hour,
+                                _endTime.minute,
+                              ));
 
                           event.description = taskDesc.text;
 
@@ -639,8 +446,10 @@ class _Creating_EventState extends State<Creating_Event> {
                           event.isAllDay = taskIsAllDay;
                           event.color = selectedColor;
 
-
-                          Provider.of<MyProvider>(context , listen : false).insertEvent(event);
+                          print(event.startTime);
+                          print(event.endTime);
+                          Provider.of<MyProvider>(context, listen: false)
+                              .insertEvent(event);
 
                           //todo: notifiction
 
@@ -654,20 +463,17 @@ class _Creating_EventState extends State<Creating_Event> {
 
                           Notification_Api.showScheduleNotification(
                               title: event.description,
-                              body: """
-                              ${DateFormat.yMMMMd().format(event.startTime).toString()} 
-                              \n ${event.summary} 
-                              \n from ${event.startTime.hour} :  ${event.startTime.minute} 
-                              \n to   ${event.endTime.hour} :  ${event.endTime.minute} 
-                              
-                              """,
-                              payload: DateFormat.yMMMMd().format(event.startTime).toString(),
+                              body:""" ${event.summary}  from ${event.startTime.hour}:${event.startTime.minute} to   ${event.endTime.hour}:${event.endTime.minute} """
+                              ,
+                              payload: DateFormat.yMMMMd()
+                                  .format(event.startTime)
+                                  .toString(),
                               shcedauleDate: event.startTime);
-                          }
-
-                          Navigator.pop(context);
                         }
-                      ,
+                        print("test");
+                        widget.notifyParent;
+                        Navigator.pop(context);
+                      },
                       child: const Text('Create'),
                     ),
                   ),

@@ -10,41 +10,17 @@ import 'package:todo_list/UI/ToDo_List/ToDo_List.dart';
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  // static int eventsCountToday = events[DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)]?.length ?? 0;
 
   final String title;
 
-  // static Map<DateTime, List<CleanCalendarEvent>> events = {
-  //   DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day): [
-  //     CleanCalendarEvent('Event A',
-  //         startTime: DateTime(DateTime.now().year, DateTime.now().month,
-  //             DateTime.now().day, 10, 0),
-  //         endTime: DateTime(DateTime.now().year, DateTime.now().month,
-  //             DateTime.now().day, 12, 0),
-  //         description: 'A special event',
-  //         color: Colors.blue,
-  //         isDone: true),
-  //   ],
-  //   DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 2):
-  //       [
-  //     CleanCalendarEvent('Event B',
-  //         startTime: DateTime(DateTime.now().year, DateTime.now().month,
-  //             DateTime.now().day + 2, 10, 0),
-  //         endTime: DateTime(DateTime.now().year, DateTime.now().month,
-  //             DateTime.now().day + 2, 12, 0),
-  //         color: Colors.orange),
-  //     CleanCalendarEvent('Event C',
-  //         startTime: DateTime(DateTime.now().year, DateTime.now().month,
-  //             DateTime.now().day + 2, 14, 30),
-  //         endTime: DateTime(DateTime.now().year, DateTime.now().month,
-  //             DateTime.now().day + 2, 17, 0),
-  //         color: Colors.pink),
-  //   ],
-  // };
+
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState(/*MyHomePage.events*/);
+  State<MyHomePage> createState() => _MyHomePageState();
 }
+
+
+
 
 class _MyHomePageState extends State<MyHomePage> {
   DateTime selectedDay = DateTime(
@@ -56,7 +32,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _MyHomePageState();
 
-  // var data = DBHelper.getEvents();
   void _handleData(date) {
     setState(() {
       selectedDay = date;
@@ -78,17 +53,23 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     Future.delayed(Duration.zero, () {
+      print("future");
+      print(Provider.of<MyProvider>(context ,  listen : false ).events);
+      if  ( Provider.of<MyProvider>(context ,  listen : false ).events.isEmpty  ) {
+        Provider.of<MyProvider>(context, listen: false).getAllEvents();
+        events = Provider
+            .of<MyProvider>(context, listen: false)
+            .events;
+      }
+      else {
 
 
-      Provider.of<MyProvider>(context ,  listen : false ).getAllEvents();
-
-      events = Provider.of<MyProvider>(context ,  listen : false ).events;
-      // _handleData(selectedDay);
-      // selectedEvent = events[selectedDay] ?? [];
+        events = Provider
+            .of<MyProvider>(context, listen: false)
+            .events;
+      }
 
     });
-
-
 
   }
 
@@ -99,7 +80,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   refresh() {
+
+    Provider.of<MyProvider>(context, listen: false).getAllEvents();
+
     setState(() {
+
+
+
+      events = Provider
+          .of<MyProvider>(context, listen: false)
+          .events;
+
       _handleData(selectedDay);
     });
   }
@@ -137,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 eventDoneColor: Colors.green,
                 bottomBarColor: Colors.deepOrange,
                 onDateSelected: (date) {
-                  // print(date);
+                  print(date);
 
                   selectedDay = date;
                   // return _handleData(date);
@@ -213,18 +204,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Colors.blueAccent,
                   ),
                   trailing: Badge(
-                    badgeContent: Text(
-                        /*'${MyHomePage.eventsCountToday}'*/
-                        ""),
+                    badgeContent:
+                       Text("${ MyProvider.eventsCountToday ?? 0 }")
+                        ,
                     child: null,
                   ),
                   onTap: () {
                     Navigator.pop(context);
 
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MyHomePage(title: "Events")));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //         builder: (context) => MyHomePage(title: "Events")));
                   },
                 ),
                 ListTile(

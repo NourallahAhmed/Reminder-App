@@ -1,6 +1,8 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:todo_list/Services/Provider/MyProvider.dart';
 
 import '../../Model/toDoModel.dart';
 import 'package:intl/intl.dart';
@@ -11,70 +13,37 @@ class ToDo_List extends StatefulWidget {
 
 
   ToDo_List({Key? key}) : super(key: key);
-  Map<DateTime, List<ToDo>> ToDoList = {
-    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 02,
-            0)
-        .toUtc(): [
-      ToDo(
-          title: "Take Assement",
-          startTime: DateTime.now(),
-          endTime: DateTime.now(),
-          isDone: false),
-      ToDo(
-          title: "Take Assement",
-          startTime: DateTime.now(),
-          endTime: DateTime.now(),
-          isDone: false),
-      ToDo(
-          title: "Take Assement",
-          startTime: DateTime.now(),
-          endTime: DateTime.now(),
-          isDone: true)
-    ],
-    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day + 1,
-            02, 0)
-        .toUtc(): [
-      ToDo(
-          title: "Take Assement",
-          startTime: DateTime.now(),
-          endTime: DateTime.now(),
-          isDone: true),
-      ToDo(
-          title: "Take Assement",
-          startTime: DateTime.now(),
-          endTime: DateTime.now(),
-          isDone: false),
-      ToDo(
-          title: "Take Assement",
-          startTime: DateTime.now(),
-          endTime: DateTime.now(),
-          isDone: true)
-    ]
-  };
+
 
   @override
-  State<ToDo_List> createState() => _ToDo_ListState(ToDoList);
+  State<ToDo_List> createState() => _ToDo_ListState();
 }
 
 class _ToDo_ListState extends State<ToDo_List> {
 
   DateTime selectedDay = DateTime(
-      DateTime.now().year, DateTime.now().month, DateTime.now().day, 02, 0);
+      DateTime.now().year, DateTime.now().month, DateTime.now().day, 00, 0);
 
   DateTime _focusedDay = DateTime(
-      DateTime.now().year, DateTime.now().month, DateTime.now().day, 02, 0);
+      DateTime.now().year, DateTime.now().month, DateTime.now().day, 00, 0);
 
   var newTask = TextEditingController();
-  late List<ToDo> selectedList;
-  Map<DateTime, List<ToDo>> ToDo_List;
 
-  _ToDo_ListState(this.ToDo_List);
+
+  late List<ToDo> selectedList;
+
+
+  Map<DateTime, List<ToDo>>? ToDo_List;
+
+
+  _ToDo_ListState();
+
 
   void _handleData(date) {
-
+    ToDo_List = Provider.of<MyProvider>(context ,  listen : false ).todoList;
     setState(() {
       selectedDay = date;
-      selectedList = ToDo_List[selectedDay] ?? [];
+      selectedList = ToDo_List?[selectedDay.toUtc()] ?? [];
 
       /// sort the events based on IsDone
       /// where the done events will be in the bottom and the un done events will be the top
@@ -87,14 +56,34 @@ class _ToDo_ListState extends State<ToDo_List> {
     });
   }
 
+
+
   @override
   void initState() {
 
-    _handleData(selectedDay.toUtc());
-    // selectedList = ToDo_List[selectedDay] ?? [];
+    update();
+
+
     super.initState();
   }
 
+  void update(){
+
+    // _handleData(selectedDay);
+
+    Future.delayed(Duration.zero, () {
+
+      Provider.of<MyProvider>(context ,  listen : false ).getAllToDoList();
+
+      ToDo_List = Provider.of<MyProvider>(context ,  listen : false ).todoList;
+
+
+      print("from initstate ${ToDo_List}");
+
+      _handleData(selectedDay);
+
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +121,7 @@ class _ToDo_ListState extends State<ToDo_List> {
                   "My Todo List      ",
                   style: TextStyle(
                       color: Colors.blue,
-                      fontSize: 30,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold),
                 ),
                 RotationTransition(
@@ -156,13 +145,13 @@ class _ToDo_ListState extends State<ToDo_List> {
               lastDay: DateTime(2025),
               focusedDay: _focusedDay,
               currentDay: _focusedDay,
-              onDaySelected: (selected_Day, focusedDay) {
+              onDaySelected: (date, focusedDay) {
                 setState(() {
-                  selectedDay = selected_Day;
-
+                  selectedDay = date;
+                  print(date);
                   _handleData(selectedDay.toUtc());
                   _focusedDay =
-                      selected_Day; // update `_focusedDay` here as well
+                      date; // update `_focusedDay` here as well
                 });
               },
             ),
@@ -213,8 +202,16 @@ class _ToDo_ListState extends State<ToDo_List> {
                                 ),),
                                 title: 'Keep Going',
                                 btnOkOnPress: () {
+
+
+
                                 },
-                                ).show() : null ;
+                                ).show()
+                                    : null ;
+
+                                //Update DB
+                                // toDoItem.isDone ? Provider.of<MyProvider>(context, listen : false).taskIsCompleted(toDoItem) : null ;
+                                Provider.of<MyProvider>(context, listen : false).taskIsCompleted(toDoItem);
                               })
                         ],
                       );
@@ -247,7 +244,10 @@ class _ToDo_ListState extends State<ToDo_List> {
             // desc: 'This is also Ignored',
             btnOkColor : Colors.blue,
             btnOkOnPress: () {
-              ToDo_List[selectedDay]?.add( ToDo(
+
+
+              Provider.of<MyProvider>(context, listen : false).insertTask(ToDo(
+                  UniqueKey().hashCode,
                   title: newTask.text,
                   startTime: selectedDay,
                   endTime: selectedDay

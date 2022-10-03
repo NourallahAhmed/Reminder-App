@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_list/Services/Provider/MyProvider.dart';
 
 import '../Edit_Event/Edit_Events.dart';
+import '../Create_Event/CreateEvent_View/Creating_Event.dart';
 
 class Event_Details_Display extends StatefulWidget {
   final CleanCalendarEvent event;
@@ -18,7 +19,13 @@ class Event_Details_Display extends StatefulWidget {
 
 class _Event_Details_DisplayState extends State<Event_Details_Display> {
   final formatter = DateFormat("YYYY-MM-DD");
-
+  //todo change to 5:00 pm format
+  String formatTimeOfDay(TimeOfDay tod) {
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    final format = DateFormat.jm();  //"6:00 AM"
+    return format.format(dt);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +41,8 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
             icon: const Icon(Icons.delete),
             onPressed: () {
               Provider.of<MyProvider>(context, listen: false).deleteEvent(widget.event);
+
+              Navigator.pop(context);
             },
           ) ,
             IconButton(
@@ -72,10 +81,10 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(8),
                 child: // Text("${widget.event.startTime } - ${widget.event.startTime.month} - ${widget.event.startTime.year}"),
                 Text(DateFormat.yMMMMd().format(widget.event.startTime),
-                  style: const TextStyle(fontSize: 40,
+                  style: const TextStyle(fontSize: 20,
                       color: Colors.black54,
                       fontWeight: FontWeight.bold),),
               ),
@@ -172,13 +181,22 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                             Text(
-                                'Start Time \t ${widget.event.startTime
-                                    .hour} : ${widget.event.startTime.minute} ',
+
+                      const Text(
+                          'Start Time  \t' , textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color:Colors.black54)),
+
+
+                      Text(formatTimeOfDay(TimeOfDay(hour: widget.event.startTime
+                          .hour, minute: widget.event.startTime
+                          .minute)),
                                 textAlign: TextAlign.start,
                                 style: const TextStyle(
                                     fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.normal,
                                     color:Colors.black54),
                               ),
                     ],
@@ -206,8 +224,9 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color:Colors.black54)),
-                                Text('${widget.event.endTime
-                                    .hour} : ${widget.event.endTime.minute}',
+                                Text(formatTimeOfDay(TimeOfDay(hour: widget.event.endTime
+                                    .hour, minute: widget.event.endTime
+                                    .minute)),
                                   textAlign: TextAlign.start,
                                   style: const TextStyle(
                                       fontSize: 20,
