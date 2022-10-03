@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:todo_list/Services/Provider/MyProvider.dart';
-import 'package:todo_list/UI/Event_Details/Event_details_screen.dart';
-// import 'package:todo_list/AddingTask/AddingNewTask.dart';
 import 'Services/DataBase/DB_Helper.dart';
 import 'Services/Notifications/Notification_Api.dart';
 import 'UI/HomePage/home_page.dart';

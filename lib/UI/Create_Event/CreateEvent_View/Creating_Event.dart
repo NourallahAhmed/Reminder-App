@@ -34,8 +34,10 @@ class _Creating_EventState extends State<Creating_Event> {
   var taskStartTime = TextEditingController();
   var taskEndTime = TextEditingController();
   var taskLocation = TextEditingController();
+  var taskURL= TextEditingController();
 
   var taskIsAllDay = false;
+  var taskIsOnline = false;
 
   Color selectedColor = Colors.blue;
 
@@ -136,7 +138,7 @@ class _Creating_EventState extends State<Creating_Event> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Create New Task      ",
+                          "Create New Event   ",
                           style: TextStyle(
                               color: Colors.blue,
                               fontSize: 20,
@@ -210,7 +212,70 @@ class _Creating_EventState extends State<Creating_Event> {
                     ),
                   ),
 
+
+                  /// IS Online
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                      decoration: BoxDecoration(
+                        border:
+                        Border.all(color: Colors.blueAccent, width: 1.0),
+                        borderRadius: const BorderRadius.all(Radius.circular(
+                            10.0) //                 <--- border radius here
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "\t \t Is it online : ",
+                            style: TextStyle(color: Colors.blue, fontSize: 20),
+                          ),
+                          Checkbox(
+                            checkColor: Colors.blue,
+                            activeColor: Colors.white,
+                            value: taskIsOnline,
+                            onChanged: (value) {
+                              setState(() {
+                                taskIsOnline
+                                    ? taskIsOnline = false
+                                    : taskIsOnline = true;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+
+                  //todo if it online feild to add the link of meeting
                   /// Location
+                  taskIsOnline ?
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      keyboardType: TextInputType.url,
+                      decoration: const InputDecoration(
+                        enabledBorder:   OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderSide:
+                            BorderSide(color: Colors.blueAccent, width: 1)),
+                        hintText: "URL For the  online meeting",
+                        // labelText: IsEditable ? widget.event.location : "",
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        prefixIcon: Icon(Icons.map, color: Colors.blue),
+                      ),
+                      controller: taskURL,
+                    ),
+                  ) : Container() ,
+
+
+
+                  /// Location
+                  taskIsOnline ? Container() :
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
@@ -228,7 +293,7 @@ class _Creating_EventState extends State<Creating_Event> {
                     ),
                   ),
 
-                  /// IS ALL DAY
+                  /// TODO: IS ALL DAY
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
@@ -264,7 +329,7 @@ class _Creating_EventState extends State<Creating_Event> {
                     ),
                   ),
 
-                  ///  Time
+                  /// TODO: Time
 
                   Padding(
                     padding: const EdgeInsets.all(8.0),

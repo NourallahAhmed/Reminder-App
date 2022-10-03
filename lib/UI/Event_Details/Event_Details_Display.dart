@@ -246,6 +246,82 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
               ),
               Container(
                 padding: const EdgeInsets.all(8.0),
+                margin:  widget.event.Url.isNotEmpty ? EdgeInsets.fromLTRB(30, 10, 30, 10) : null ,
+                decoration: BoxDecoration(
+                  color: widget.event.location.isEmpty
+                      ? Colors.transparent
+                      : Colors.white30,
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                child: widget.event.Url.isNotEmpty ?
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const Text(
+                            "Event Is Online ",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color:Colors.black54),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ) : null ,
+              ),
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                margin:  widget.event.Url.isNotEmpty ? EdgeInsets.fromLTRB(30, 10, 30, 10) : null ,
+                decoration: BoxDecoration(
+                  color: widget.event.location.isEmpty
+                      ? Colors.transparent
+                      : Colors.white30,
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                ),
+                child: widget.event.Url.isNotEmpty ?
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const Text(
+                            "Url  ",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color:Colors.black54),
+                          ),
+                          Text(
+                            widget.event.Url,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal,
+                                color:Colors.black54),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ) : null ,
+              ),
+              Container(
+                padding: const EdgeInsets.all(8.0),
                 margin:  widget.event.location.isNotEmpty ? EdgeInsets.fromLTRB(30, 10, 30, 10) : null ,
                 decoration: BoxDecoration(
                   color: widget.event.location.isEmpty

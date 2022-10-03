@@ -10,7 +10,7 @@ class DBHelper {
   static Database? _db;
   static Database? _db_ToDO;
 
-  static const int _versionEvents = 6;
+  static const int _versionEvents = 7;
   static const int _versionTodo = 2;
 
   static const String _tableNameEvents = "eventsDB";
@@ -46,11 +46,14 @@ class DBHelper {
                   summary TEXT, 
                   description TEXT,
                   location TEXT, 
+                  Url TEXT, 
                   startTime TEXT,
                   endTime TEXT,
                   color TEXT,
                   isAllDay INTEGER,
-                  isDone INTEGER
+                  isDone INTEGER,
+                  isOnline INTEGER,
+                  
                   )''',
         ).catchError((error) => print(error.toString()));;
           });

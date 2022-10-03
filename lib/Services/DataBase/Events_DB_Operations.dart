@@ -101,8 +101,10 @@ class Events_DB_Operations{
         description: events[i]['description'],
         color: Color(int.parse(events[i]['color'])),
         location:  events[i]['location']  ,
+        Url:  events[i]['Url']  ,
         isAllDay:  events[i]['isAllDay'] == 0 ? false : true,
         isDone:  events[i]['isDone'] == 0 ? false : true,
+        isOnline:  events[i]['isOnline'] == 0 ? false : true,
       );
     });
     //
