@@ -33,10 +33,14 @@ class _MyHomePageState extends State<MyHomePage> {
   _MyHomePageState();
 
   void _handleData(date) {
+    events = Provider
+        .of<MyProvider>(context, listen: false)
+        .events;
+
     setState(() {
       selectedDay = date;
       selectedEvent = events[selectedDay] ?? [];
-
+  print(selectedEvent);
       /// sort the events based on IsDone
       /// where the done events will be in the bottom and the un done events will be the top
       selectedEvent.sort((a, b) {
@@ -236,32 +240,30 @@ class _MyHomePageState extends State<MyHomePage> {
                                 )));
                   },
                 ),
-                ListTile(
-                  title: const Text('Habits'),
-                  leading: const Icon(
-                    Icons.heat_pump,
-                    color: Colors.blueAccent,
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    //
-                    // Navigator.push(context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) =>
-                    //             MyHomePage(title: "Events")));
-                  },
-                ),
+                // ListTile(
+                //   title: const Text('Habits'),
+                //   leading: const Icon(
+                //     Icons.heat_pump,
+                //     color: Colors.blueAccent,
+                //   ),
+                //   onTap: () {
+                //     Navigator.pop(context);
+                //     //
+                //     // Navigator.push(context,
+                //     //     MaterialPageRoute(
+                //     //         builder: (context) =>
+                //     //             MyHomePage(title: "Events")));
+                //   },
+                // ),
                 ListTile(
                   title: const Text('Todo List'),
                   leading: const Icon(
                     Icons.list,
                     color: Colors.blueAccent,
                   ),
-                  // trailing: Badge(
-                  //   badgeContent: Text(
-                  //       '${ToDo_List.listCount}'),
-                  //   child: null,
-                  // ),
+                  trailing: Badge(
+                      badgeContent:
+                      Text("${ MyProvider.todoCountToday ?? 0 }")),
                   onTap: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => ToDo_List()));

@@ -10,7 +10,7 @@ class DBHelper {
   static Database? _db;
   static Database? _db_ToDO;
 
-  static const int _versionEvents = 7;
+  static const int _versionEvents = 8;
   static const int _versionTodo = 2;
 
   static const String _tableNameEvents = "eventsDB";
@@ -52,12 +52,12 @@ class DBHelper {
                   color TEXT,
                   isAllDay INTEGER,
                   isDone INTEGER,
-                  isOnline INTEGER,
-                  
+                  isOnline INTEGER
                   )''',
-        ).catchError((error) => print(error.toString()));;
+        )
+                .catchError((error) => print(" Error in create ${error.toString()}"));;
           });
-
+      print(_db.toString());
 
       //openDataBase ToDoDB
       _db_ToDO = await openDatabase(

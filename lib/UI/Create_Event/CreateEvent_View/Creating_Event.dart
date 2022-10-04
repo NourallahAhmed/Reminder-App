@@ -263,7 +263,7 @@ class _Creating_EventState extends State<Creating_Event> {
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                             borderSide:
                             BorderSide(color: Colors.blueAccent, width: 1)),
-                        hintText: "URL For the  online meeting",
+                        hintText: "https://www.google.com/",
                         // labelText: IsEditable ? widget.event.location : "",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
                         prefixIcon: Icon(Icons.map, color: Colors.blue),
@@ -510,7 +510,8 @@ class _Creating_EventState extends State<Creating_Event> {
                           event.location = taskLocation.text;
                           event.isAllDay = taskIsAllDay;
                           event.color = selectedColor;
-
+                          event.Url = taskURL.text;
+                          event.isOnline = taskIsOnline;
                           print(event.startTime);
                           print(event.endTime);
                           Provider.of<MyProvider>(context, listen: false)

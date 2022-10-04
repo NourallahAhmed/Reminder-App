@@ -11,7 +11,12 @@ class Events_DB_Operations{
 
   static Future<int> insertEvent(CleanCalendarEvent event) async{
     print("insert");
-    final insert = await _db!.insert(_tableNameEvents! ,  event.toJson());
+    final insert = await _db!.insert(_tableNameEvents! ,  event.toJson()).catchError(
+
+       (error) => print(" Error in Insert ${error.toString()}")
+
+
+    );
     print(await Events_DB_Operations.getEvents());
     return insert;
   }

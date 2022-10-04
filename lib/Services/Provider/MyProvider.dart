@@ -18,6 +18,7 @@ class MyProvider with ChangeNotifier {
       <DateTime, List<ToDo>> {
   };
   static int? eventsCountToday;
+  static int? todoCountToday;
 
 
   MyProvider(){
@@ -174,8 +175,7 @@ class MyProvider with ChangeNotifier {
 
     if (todoList.containsKey(
       event.startTime
-      )
-    ) {
+      )) {
       todoList.update(
 
               event.startTime,
@@ -189,7 +189,7 @@ class MyProvider with ChangeNotifier {
       };
       todoList.addAll(instance);
     }
-
+   todoCountToday = todoList[DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)]?.length ?? 0;
 
     print("Provider todoList ${todoList}");
   }

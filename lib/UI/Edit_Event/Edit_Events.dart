@@ -30,7 +30,11 @@ class _Edit_EventState extends State<Edit_Event> {
   var taskStartTime = TextEditingController();
   var taskEndTime = TextEditingController();
   var taskLocation = TextEditingController();
+
+  var taskURL= TextEditingController();
+
   var taskIsAllDay = false;
+  var taskIsOnline = false;
 
 
   Color selectedColor = Colors.blue;
@@ -84,7 +88,15 @@ class _Edit_EventState extends State<Edit_Event> {
 
   _Edit_EventState(this.selectedDay , this.event);
 
+initState(){
 
+  setState(() {
+    this.taskIsOnline = widget.event.isOnline;
+    // this.taskURL = widget.event.Url as TextEditingController;
+    // this.taskDesc = widget.event.description as TextEditingController;
+    // this.taskLocation = widget.event.location as TextEditingController;
+  });
+}
 
 
   @override
@@ -198,22 +210,82 @@ class _Edit_EventState extends State<Edit_Event> {
                     ),
                   ),
 
-                  /// todo: Location
+
+                  /// IS Online
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+                      decoration: BoxDecoration(
+                        border:
+                        Border.all(color: Colors.blueAccent, width: 1.0),
+                        borderRadius: const BorderRadius.all(Radius.circular(
+                            10.0) //                 <--- border radius here
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "\t \t Is it online : ",
+                            style: TextStyle(color: Colors.blue, fontSize: 20),
+                          ),
+                          Checkbox(
+                            checkColor: Colors.blue,
+                            activeColor: Colors.white,
+                            value: taskIsOnline,
+                            onChanged: (value) {
+                              setState(() {
+                                taskIsOnline
+                                    ? taskIsOnline = false
+                                    : taskIsOnline = true;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+
+                  //todo if it online feild to add the link of meeting
+                  /// Location
+                  taskIsOnline ?
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
-                      decoration:  InputDecoration(
-                        enabledBorder: const OutlineInputBorder(
+                      keyboardType: TextInputType.url,
+                      decoration: const InputDecoration(
+                        enabledBorder:   OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                             borderSide:
                             BorderSide(color: Colors.blueAccent, width: 1)),
-                        hintText: event.location.isEmpty ? "location" : event.location,
+                        hintText: "URL For the  online meeting",
                         // labelText: IsEditable ? widget.event.location : "",
                         floatingLabelBehavior: FloatingLabelBehavior.never,
-                        prefixIcon: const Icon(
-                          Icons.location_city,
-                          color: Colors.blue,
-                        ),
+                        prefixIcon: Icon(Icons.map, color: Colors.blue),
+                      ),
+                      controller: taskURL,
+                    ),
+                  ) : Container() ,
+
+
+
+                  /// Location
+                  taskIsOnline ? Container() :
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      decoration: const InputDecoration(
+                        enabledBorder:   OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderSide:
+                            BorderSide(color: Colors.blueAccent, width: 1)),
+                        hintText: "location",
+                        // labelText: IsEditable ? widget.event.location : "",
+                        floatingLabelBehavior: FloatingLabelBehavior.never,
+                        prefixIcon: Icon(Icons.map, color: Colors.blue),
                       ),
                       controller: taskLocation,
                     ),
@@ -497,6 +569,9 @@ class _Edit_EventState extends State<Edit_Event> {
                            description: taskDesc.text,
                            location: taskLocation.text,
                            isAllDay: taskIsAllDay,
+
+                           Url : taskURL.text,
+                           isOnline: taskIsOnline ,
                           color :selectedColor,
                          );
 
