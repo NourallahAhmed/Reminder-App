@@ -4,14 +4,14 @@ The event can be online so the user can click on the link and it will be direct 
 The user can build his todo list and orgainze his daily work.
 
 
-#Featuers
+# Featuers
  - Events screen
  - Edit event screen.
  - Display event screen.
  - Todo list screen.
  - Notification.
 
-#Tools
+# Tools
   - Provider
   - Database
   - Awesome dialoge package
@@ -21,7 +21,7 @@ The user can build his todo list and orgainze his daily work.
   - Local notiication.
   - Table Calender Package
 
-#Screens
+# Screens 
 
 
   - Drawer 
