@@ -1,5 +1,5 @@
 # Reminder_App
-It`s Flutter applictions , the user can scheduale event and recieve a notifiction in it`s time.
+It is Flutter applictions , the user can scheduale event and recieve a notifiction in it is time.
 The event can be online so the user can click on the link and it will be direct to the website link.
 The user can build his todo list and orgainze his daily work.
 
