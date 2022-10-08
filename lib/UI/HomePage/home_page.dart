@@ -40,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       selectedDay = date;
       selectedEvent = events[selectedDay] ?? [];
-  print(selectedEvent);
+      print(selectedEvent);
       /// sort the events based on IsDone
       /// where the done events will be in the bottom and the un done events will be the top
       selectedEvent.sort((a, b) {
@@ -101,6 +101,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print("object");
+    print(Provider
+        .of<MyProvider>(context, listen: false)
+        .events.length);
     return Consumer<MyProvider>(builder: (context, provider, child) {
       return Scaffold(
         appBar: AppBar(
@@ -131,6 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 eventColor: Colors.blue,
                 eventDoneColor: Colors.green,
                 bottomBarColor: Colors.deepOrange,
+                initialDate: DateTime.now(),
                 onDateSelected: (date) {
                   print(date);
 
@@ -199,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   decoration: const BoxDecoration(
                     color: Colors.blue,
                   ),
-                  child: Image.asset('assets/images/createTask.png'),
+                  child: Image.asset('assets/images/sketchbook.png'),
                 ),
                 ListTile(
                   title: const Text('schedule'),

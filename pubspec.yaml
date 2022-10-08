@@ -74,7 +74,7 @@ flutter:
   uses-material-design: true
   assets:
     - packages/timezone/data/latest.tzf
-    - assets/
+    - assets/images/sketchbook.png
 #    - images/createTask.png
 
   #   - images/a_dot_ham.jpeg

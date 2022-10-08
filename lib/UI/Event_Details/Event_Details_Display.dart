@@ -425,7 +425,7 @@ class _Event_Details_DisplayState extends State<Event_Details_Display> {
               // ),
               Container(
                 padding: const EdgeInsets.all(8.0),
-                margin: widget.event.isOnline!
+                margin:  widget.event.location.isEmpty
                     ? EdgeInsets.fromLTRB(30, 10, 30, 10)
                     : null,
                 decoration: BoxDecoration(

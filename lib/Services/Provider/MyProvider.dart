@@ -34,7 +34,6 @@ class MyProvider with ChangeNotifier {
 
     if (allEvents.isNotEmpty) {
       convertToMap(allEvents);
-
     }
   }
 
@@ -63,6 +62,7 @@ class MyProvider with ChangeNotifier {
       events.addAll(instance);
     }
     eventsCountToday = events[DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)]?.length ?? 0;
+    notifyListeners();
 
   }
 
