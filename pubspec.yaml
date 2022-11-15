@@ -48,6 +48,7 @@ dependencies:
   rxdart: ^0.26.0
   url_launcher: ^6.1.6
   auto_size_text: ^3.0.0
+  curved_navigation_bar:
 
 
 dev_dependencies:

@@ -1,5 +1,7 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_list/Services/Provider/todo_provider.dart';
 import 'package:todo_list/UI/Create_Event/CreateEvent_View/Creating_Event.dart';
 import 'package:todo_list/UI/Event_Details/Event_Details_Display.dart';
 import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
@@ -8,11 +10,7 @@ import 'package:todo_list/Services/Provider/MyProvider.dart';
 import 'package:todo_list/UI/ToDo_List/ToDo_List.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
-
-
-  final String title;
-
+  const MyHomePage({Key? key}) : super(key: key);
 
 
   @override
@@ -30,6 +28,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Map<DateTime, List<CleanCalendarEvent>> events =
       <DateTime, List<CleanCalendarEvent>>{};
 
+
+  var _selectedIndex = 0 ;
   _MyHomePageState();
 
   void _handleData(date) {
@@ -101,14 +101,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print("object");
-    print(Provider
-        .of<MyProvider>(context, listen: false)
-        .events.length);
+
     return Consumer<MyProvider>(builder: (context, provider, child) {
+
       return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: Text("Events"),
+          backgroundColor: Colors.blueAccent,
         ),
 
         body: SafeArea(
@@ -179,19 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
 
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Creating_Event(
-                          selectedDay: selectedDay,
-                          notifyParent: refresh,
-                        )));
-          },
-          child: const Icon(Icons.add),
-        ),
-        // This trailing comma makes auto-formatting nicer for build methods.
+
 
         drawer: SizedBox(
           width: 250,
@@ -241,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialPageRoute(
                             builder: (context) => Creating_Event(
                                   selectedDay: selectedDay,
-                                  notifyParent: refresh,
+                                  // notifyParent: refresh,
                                 )));
                   },
                 ),
@@ -268,7 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                   trailing: Badge(
                       badgeContent:
-                      Text("${ MyProvider.todoCountToday ?? 0 }")),
+                      Text("${ TodoProvider.todoCountToday ?? 0 }")),
                   onTap: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => ToDo_List()));
@@ -278,7 +265,51 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
+        bottomNavigationBar : CurvedNavigationBar(
+          backgroundColor: Colors.blueAccent,
+          index: 0,
+          items:const <Widget>  [
+
+            Icon(Icons.home, size: 30),
+            Icon(Icons.add, size: 30),
+            Icon(Icons.list_alt, size: 30),
+          ],
+          onTap: _onItemTapped,
+        ),
+
+
       );
     });
+  }
+
+  void _onItemTapped(int value) {
+    setState((){
+      _selectedIndex = value;
+    });
+
+
+    switch(_selectedIndex){
+      case 0 :
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => const MyHomePage()));
+        break;
+
+      case 1 :
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Creating_Event(selectedDay: selectedDay)));
+        break;
+      case 2 :
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ToDo_List()));
+        break;
+
+    }
+
   }
 }

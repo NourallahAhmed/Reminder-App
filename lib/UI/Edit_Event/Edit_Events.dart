@@ -580,7 +580,7 @@ initState(){
                           Provider.of<MyProvider>(context , listen : false).insertEvent(newEvent);
                           print("DONE3");
 
-                          Navigator.push(context, MaterialPageRoute(builder: (builder) => MyHomePage( title: 'ُEvents',)));
+                          Navigator.push(context, MaterialPageRoute(builder: (builder) => MyHomePage()));
 
                         }
                       }
